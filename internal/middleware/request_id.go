@@ -2,7 +2,7 @@
 package middleware
 
 import (
-	"github.com/adshin21/fib/util"
+	"github.com/adshin21/fib/internal/util"
 	"github.com/gin-gonic/gin"
 )
 

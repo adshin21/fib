@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"time"
@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func useCors() gin.HandlerFunc {
+func UseCors() gin.HandlerFunc {
 	return cors.New(
 		cors.Config{
 			AllowOrigins:     []string{"http://localhost:9090"},
