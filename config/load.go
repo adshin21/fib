@@ -20,6 +20,25 @@ func NewConfigLoader() *ConfigLoader {
 	return &ConfigLoader{v: v}
 }
 
+// setDefaults configures all default configuration values.
+// All defaults are centralized here for easy maintenance.
+func (l *ConfigLoader) setDefaults() {
+	// Server defaults
+	l.v.SetDefault("server.port", "8080")
+	l.v.SetDefault("server.env", "development")
+
+	// CORS defaults
+	l.v.SetDefault("cors.allow_origins", []string{"http://localhost:9090"})
+
+	// Log defaults
+	l.v.SetDefault("log.level", "info")
+	l.v.SetDefault("log.file_path", "app.log")
+	l.v.SetDefault("log.max_size", 5)
+	l.v.SetDefault("log.max_backups", 10)
+	l.v.SetDefault("log.max_age", 14)
+	l.v.SetDefault("log.compress", true)
+}
+
 // Load reads and unmarshals the configuration.
 func (l *ConfigLoader) Load() (*AppConfig, error) {
 	configPath := os.Getenv("CONFIG_PATH")
@@ -27,15 +46,8 @@ func (l *ConfigLoader) Load() (*AppConfig, error) {
 		configPath = "config" // Default to config directory or file
 	}
 
-	l.v.SetDefault("server.port", "8080")
-	l.v.SetDefault("server.env", "development")
-	l.v.SetDefault("cors.allow_origins", []string{"http://localhost:9090"})
-	l.v.SetDefault("log.level", "info")
-	l.v.SetDefault("log.file_path", "app.log")
-	l.v.SetDefault("log.max_size", 5)
-	l.v.SetDefault("log.max_backups", 10)
-	l.v.SetDefault("log.max_age", 14)
-	l.v.SetDefault("log.compress", true)
+	// Set all defaults in one place
+	l.setDefaults()
 
 	l.v.AddConfigPath(configPath)
 	l.v.AddConfigPath("./config") // Fallback

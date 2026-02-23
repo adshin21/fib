@@ -10,10 +10,6 @@ import (
 
 func UseCors(cfg *config.AppConfig) gin.HandlerFunc {
 	allowOrigins := cfg.CORS.AllowOrigins
-	if len(allowOrigins) == 0 {
-		allowOrigins = []string{"http://localhost:9090"}
-	}
-
 	return cors.New(
 		cors.Config{
 			AllowOrigins:     allowOrigins,
