@@ -1,16 +1,20 @@
 package app
 
 import (
+	"github.com/adshin21/fib/config"
 	"github.com/adshin21/fib/internal/middleware"
 	"github.com/adshin21/fib/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
-func setupRoutes(router *gin.Engine) {
+func setupRoutes(router *gin.Engine, cfg *config.AppConfig) {
 	router.Use(middleware.CustomGinLogger())
 	router.Use(gin.Recovery())
-	router.Use(middleware.UseCors())
+	router.Use(middleware.UseCors(cfg))
 	router.Use(middleware.RequestIDMiddleware())
+
+	l := logger.Get()
+	l.Info().Str("env", cfg.Server.Env).Msg("Configured environment")
 
 	router.GET("/ping", func(c *gin.Context) {
 		l := logger.Get()
@@ -18,6 +22,12 @@ func setupRoutes(router *gin.Engine) {
 		l.Debug().Msg("how are you?")
 		c.JSON(200, gin.H{
 			"message": "pong",
+		})
+	})
+
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "healthy",
 		})
 	})
 }

@@ -3,14 +3,20 @@ package middleware
 import (
 	"time"
 
+	"github.com/adshin21/fib/config"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func UseCors() gin.HandlerFunc {
+func UseCors(cfg *config.AppConfig) gin.HandlerFunc {
+	allowOrigins := cfg.CORS.AllowOrigins
+	if len(allowOrigins) == 0 {
+		allowOrigins = []string{"http://localhost:9090"}
+	}
+
 	return cors.New(
 		cors.Config{
-			AllowOrigins:     []string{"http://localhost:9090"},
+			AllowOrigins:     allowOrigins,
 			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
 			ExposeHeaders:    []string{"Content-Length"},

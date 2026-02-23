@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	config.Init()
-	app.Run(config.GetConfig())
+	cfg := config.MustGet()
+	app.Run(cfg)
 }

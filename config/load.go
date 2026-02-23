@@ -1,34 +1,77 @@
 package config
 
 import (
-	"log/slog"
+	"fmt"
 	"os"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 )
 
-func LoadConfig(path string) (*Config, error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.AutomaticEnv()
+// ConfigLoader handles the loading of configuration from files and environment variables.
+type ConfigLoader struct {
+	v *viper.Viper
+}
 
-	err := viper.ReadInConfig()
+// NewConfigLoader creates a new instance of ConfigLoader.
+func NewConfigLoader() *ConfigLoader {
+	v := viper.New()
+	return &ConfigLoader{v: v}
+}
+
+// Load reads and unmarshals the configuration.
+func (l *ConfigLoader) Load() (*AppConfig, error) {
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
+		configPath = "config" // Default to config directory or file
+	}
+
+	l.v.SetDefault("server.port", "8080")
+	l.v.SetDefault("server.env", "development")
+	l.v.SetDefault("cors.allow_origins", []string{"http://localhost:9090"})
+	l.v.SetDefault("log.level", "info")
+	l.v.SetDefault("log.file_path", "app.log")
+	l.v.SetDefault("log.max_size", 5)
+	l.v.SetDefault("log.max_backups", 10)
+	l.v.SetDefault("log.max_age", 14)
+	l.v.SetDefault("log.compress", true)
+
+	l.v.AddConfigPath(configPath)
+	l.v.AddConfigPath("./config") // Fallback
+	l.v.SetConfigName("config")
+	l.v.SetConfigType("yaml")
+	l.v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	l.v.AutomaticEnv()
+
+	if err := l.v.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			return nil, fmt.Errorf("failed to read config file: %w", err)
+		}
+	}
+
+	var config AppConfig
+	if err := l.v.Unmarshal(&config); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	return &config, nil
+}
+
+// loadConfiguration performs the actual configuration loading and validation.
+func loadConfiguration() (*AppConfig, error) {
+	loader := NewConfigLoader()
+
+	config, err := loader.Load()
 	if err != nil {
 		return nil, err
 	}
 
-	if err := viper.Unmarshal(&Cfg); err != nil {
-		return nil, err
+	// Validate configuration
+	validate := validator.New()
+	if err := validate.Struct(config); err != nil {
+		return nil, fmt.Errorf("config validation failed: %w", err)
 	}
-	return Cfg, nil
-}
 
-func Init() {
-	if _, err := LoadConfig("./config"); err != nil {
-		slog.Error("error loading config", "err", err)
-		os.Exit(1)
-	}
+	return config, nil
 }

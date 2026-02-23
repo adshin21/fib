@@ -14,9 +14,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func Run(cfg *config.Config) {
+func Run(cfg *config.AppConfig) {
 	handler := gin.New()
-	setupRoutes(handler)
+	setupRoutes(handler, cfg)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
