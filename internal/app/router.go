@@ -4,6 +4,7 @@ import (
 	"github.com/adshin21/fib/config"
 	"github.com/adshin21/fib/internal/middleware"
 	"github.com/adshin21/fib/pkg/logger"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,10 @@ func setupRoutes(router *gin.Engine, cfg *config.AppConfig) {
 
 	l := logger.Get()
 	l.Info().Str("env", cfg.Server.Env).Msg("Configured environment")
+
+	// Debug routes with pprof (add auth middleware later)
+	// Example: debugGroup.Use(authMiddleware)
+	pprof.RouteRegister(router)
 
 	router.GET("/ping", func(c *gin.Context) {
 		l := logger.Get()

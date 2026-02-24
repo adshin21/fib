@@ -30,3 +30,4 @@ config/config.yaml
 tmp/*
 *.log*
 app
+*.prof
