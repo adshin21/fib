@@ -3,9 +3,10 @@ package middleware
 import (
 	"time"
 
-	"github.com/adshin21/fib/config"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	"github.com/adshin21/fib/config"
 )
 
 func UseCors(cfg *config.AppConfig) gin.HandlerFunc {

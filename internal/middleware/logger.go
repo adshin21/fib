@@ -3,8 +3,9 @@ package middleware
 import (
 	"time"
 
-	"github.com/adshin21/fib/pkg/logger"
 	"github.com/gin-gonic/gin"
+
+	"github.com/adshin21/fib/pkg/logger"
 )
 
 func CustomGinLogger() gin.HandlerFunc {

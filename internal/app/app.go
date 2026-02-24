@@ -8,10 +8,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/adshin21/fib/config"
-	"github.com/adshin21/fib/pkg/httpserver"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
+
+	"github.com/adshin21/fib/config"
+	"github.com/adshin21/fib/pkg/httpserver"
 )
 
 func Run(cfg *config.AppConfig) {

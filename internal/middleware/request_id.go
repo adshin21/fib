@@ -2,8 +2,9 @@
 package middleware
 
 import (
-	"github.com/adshin21/fib/internal/util"
 	"github.com/gin-gonic/gin"
+
+	"github.com/adshin21/fib/internal/util"
 )
 
 func RequestIDMiddleware() gin.HandlerFunc {
