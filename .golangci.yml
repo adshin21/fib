@@ -44,78 +44,63 @@ linters:
     - sqlclosecheck
     - modernize
 
+  settings:
+    gosec:
+      severity: medium
+      confidence: medium
+
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+
+    staticcheck:
+      checks: ["all"]
+
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+        - opinionated
+      disabled-tags:
+        - experimental
+      settings:
+        hugeParam:
+          sizeThreshold: 80
+        rangeExprCopy:
+          sizeThreshold: 512
+          skipTestFuncs: true
+
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+
+    errorlint:
+      errorf: true
+      asserts: true
+      comparison: true
+
+    wrapcheck:
+      ignore-sig-regexps:
+        - \.Errorf?\(
+        - \.Marshal\(
+        - \.Unmarshal\(
+
 formatters:
   enable:
     - gofmt
     - goimports
 
-linters-settings:
-  gosec:
-    severity: medium
-    confidence: medium
+  settings:
+    gofmt:
+      simplify: true
 
-  govet:
-    enable-all: true
-    disable:
-      - fieldalignment  # Optional: can be noisy for structs
-
-  staticcheck:
-    checks: ["all"]
-
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - style
-      - performance
-      - opinionated
-    disabled-tags:
-      - experimental
-    settings:
-      hugeParam:
-        sizeThreshold: 80
-      rangeExprCopy:
-        sizeThreshold: 512
-        skipTestFuncs: true
-
-  gofmt:
-    simplify: true
-
-  goimports:
-    local-prefixes: github.com/adshin21/fib
-
-  errcheck:
-    check-type-assertions: true
-    check-blank: true
-
-  errorlint:
-    errorf: true
-    asserts: true
-    comparison: true
-
-  wrapcheck:
-    ignore-sig-regexps:
-      - \.Errorf?\(   # Allow fmt.Error and fmt.Errorf
-      - \.Marshal\(   # Allow JSON marshaling
-      - \.Unmarshal\( # Allow JSON unmarshaling
-
-  modernize:
-    # Suggests modern Go patterns and idioms
-    enable-all: true
+    goimports:
+      local-prefixes:
+        - github.com/adshin21/fib
 
 issues:
-  exclude-rules:
-    # Exclude some linters from tests
-    - path: _test\.go
-      linters:
-        - gosec
-        - errcheck
-        - wrapcheck
-
-    # Allow deprecated API usage if documented
-    - linters:
-        - staticcheck
-      text: "SA1019"
-
   max-issues-per-linter: 50
   max-same-issues: 10
   new: false
