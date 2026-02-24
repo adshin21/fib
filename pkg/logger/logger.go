@@ -20,6 +20,7 @@ var log zerolog.Logger
 
 func Get() zerolog.Logger {
 	once.Do(func() {
+		//nolint:reassign // Setting global zerolog error stack marshaler is required for stack trace support
 		zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 		zerolog.TimeFieldFormat = time.RFC3339Nano
 

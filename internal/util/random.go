@@ -14,6 +14,7 @@ func GenerateFastString(n int) string {
 	sb.Grow(n)
 	for range n {
 		// rand.IntN is thread-safe in v2
+		//nolint:gosec // G404: Non-crypto random is intentional for fast, non-sensitive string generation
 		idx := rand.IntN(len(charset))
 		sb.WriteByte(charset[idx])
 	}
