@@ -1,0 +1,121 @@
+# golangci-lint configuration for Go 1.25+
+# https://golangci-lint.run/usage/configuration/
+
+version: "2"
+
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  go: "1.25"
+
+output:
+  formats:
+    text:
+      path: stdout
+      print-issued-lines: true
+      print-linter-name: true
+
+linters:
+  enable:
+    # Security
+    - gosec
+    - govet
+
+    # Error handling
+    - errcheck
+    - errorlint
+    - wrapcheck
+
+    # Code quality
+    - staticcheck
+    - ineffassign
+    - unused
+    - gocritic
+
+    # Modern best practices
+    - prealloc
+    - bodyclose
+    - noctx
+    - reassign
+    - fatcontext
+    - perfsprint
+    - nilnil
+    - sqlclosecheck
+    - modernize
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+linters-settings:
+  gosec:
+    severity: medium
+    confidence: medium
+
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment  # Optional: can be noisy for structs
+
+  staticcheck:
+    checks: ["all"]
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+      - opinionated
+    disabled-tags:
+      - experimental
+    settings:
+      hugeParam:
+        sizeThreshold: 80
+      rangeExprCopy:
+        sizeThreshold: 512
+        skipTestFuncs: true
+
+  gofmt:
+    simplify: true
+
+  goimports:
+    local-prefixes: github.com/adshin21/fib
+
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+
+  errorlint:
+    errorf: true
+    asserts: true
+    comparison: true
+
+  wrapcheck:
+    ignore-sig-regexps:
+      - \.Errorf?\(   # Allow fmt.Error and fmt.Errorf
+      - \.Marshal\(   # Allow JSON marshaling
+      - \.Unmarshal\( # Allow JSON unmarshaling
+
+  modernize:
+    # Suggests modern Go patterns and idioms
+    enable-all: true
+
+issues:
+  exclude-rules:
+    # Exclude some linters from tests
+    - path: _test\.go
+      linters:
+        - gosec
+        - errcheck
+        - wrapcheck
+
+    # Allow deprecated API usage if documented
+    - linters:
+        - staticcheck
+      text: "SA1019"
+
+  max-issues-per-linter: 50
+  max-same-issues: 10
+  new: false
